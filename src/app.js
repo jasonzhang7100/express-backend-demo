@@ -1,19 +1,20 @@
 require("dotenv").config();
 const express = require("express");
-const morgan = require("morgan");
 const cors = require("cors");
 
 const router = require("./routes");
+const morgan = require("morgan");
+const { connectToDb } = require("./utils/db");
 
 const PORT = process.env.PORT || 3000;
 const app = express();
 
-const morganLog = process.env.NODE_ENV === "production" ? morgan("common") : morgan("dev");
-app.use(morganLog);
-app.use(cors());
+app.use(morgan(process.env.NODE_ENV === "production" ? "common" : "dev"));
 app.use(express.json());
+app.use(cors());
 app.use("/api", router);
+connectToDb();
 
 app.listen(PORT, () => {
-  console.log(`Server listening on port ${PORT}`);
+  console.log(`Server listening on ${PORT}.`);
 });
